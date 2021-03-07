@@ -14,6 +14,11 @@ class SceneFile(object):
                               task=self.task, ver=self.ver,
                               ext=self.ext)
 
+    @property
+    def path(self):
+        result = self.folder_path + "/" + self.filename
+        return result
+
 
 scene_file = SceneFile("D:\\", "tank", "model", 1, ".ma")
-print(scene_file.filename)
+print(scene_file.path)
