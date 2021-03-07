@@ -16,6 +16,10 @@ class SceneFile(object):
         scene = pmc.system.sceneName()
         if not path and scene:
             path = scene
+        if not path and not scene:
+            log.warning("Unable to initialize SceneFile object from"
+                        "a new scene. Please specify a path.")
+            return
         self._init_from_path(path)
 
     @property
