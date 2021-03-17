@@ -1,8 +1,26 @@
 from pymel.core.system import Path
+from PySide2 import QtWidgets, QtCore
+from shiboken2 import wrapInstance
+import maya.OpenMayaUI as openMUI
 import pymel.core as pmc
 import logging
 
 log = logging.getLogger(__name__)
+
+
+def maya_main_window():
+    main_window = openMUI.MQtUtil_mainWindow()
+    return wrapInstance(long(main_window), QtWidgets.QDialog)
+
+
+class SmartSaveUI(QtWidgets.QDialog):
+    def __init__(self):
+        super(SmartSaveUI, self).__init__(parent=maya_main_window())
+        self.setWindowTitle("Smart Save")
+        self.setMinimumWidth(500)
+        self.setMaximumHeight(200)
+        self.setWindowFlags(self.windowFlags() ^
+                            QtCore.Qt.WindowContextHelpButtonHint)
 
 
 class SceneFile(object):
