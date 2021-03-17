@@ -2,6 +2,7 @@ from pymel.core.system import Path
 from PySide2 import QtWidgets, QtCore
 from shiboken2 import wrapInstance
 import maya.OpenMayaUI as openMUI
+import maya.cmds as cmds
 import pymel.core as pmc
 import logging
 
@@ -26,7 +27,10 @@ class SmartSaveUI(QtWidgets.QDialog):
     def create_ui(self):
         self.title_label = QtWidgets.QLabel("Smart Save")
         self.title_label.setStyleSheet("font: bold 20px")
-        self.folder_le = QtWidgets.QLineEdit("C\\")
+        default_folder = Path(cmds.workspace
+                              (rootDirectory=True, query=True))
+        default_folder = default_folder/"scenes"
+        self.folder_le = QtWidgets.QLineEdit(default_folder)
         self.folder_browse_button = QtWidgets.QPushButton("...")
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.folder_le)
