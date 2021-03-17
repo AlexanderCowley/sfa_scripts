@@ -26,8 +26,14 @@ class SmartSaveUI(QtWidgets.QDialog):
     def create_ui(self):
         self.title_label = QtWidgets.QLabel("Smart Save")
         self.title_label.setStyleSheet("font: bold 20px")
+        self.folder_le = QtWidgets.QLineEdit("C\\")
+        self.folder_browse_button = QtWidgets.QPushButton("...")
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.folder_le)
+        layout.addWidget(self.folder_browse_button)
         self.main_layout = QtWidgets.QVBoxLayout()
         self.main_layout.addWidget(self.title_label)
+        self.main_layout.addLayout(layout)
         self.setLayout(self.main_layout)
 
 
