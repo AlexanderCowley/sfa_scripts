@@ -30,11 +30,21 @@ class SmartSaveUI(QtWidgets.QDialog):
         self.folder_lay = self._create_folder_ui()
         self.descriptor_header_label = QtWidgets.QLabel("Descriptor")
         self.filename_lay = self._create_filename_ui()
+        self.btn_layout = self._create_button_ui()
         self.main_layout = QtWidgets.QVBoxLayout()
         self.main_layout.addWidget(self.title_label)
         self.main_layout.addLayout(self.folder_lay)
         self.main_layout.addLayout(self.filename_lay)
+        self.main_layout.addLayout(self.btn_layout)
         self.setLayout(self.main_layout)
+
+    def _create_button_ui(self):
+        self.save_btn = QtWidgets.QPushButton("Save")
+        self.save_increment = QtWidgets.QPushButton("Save Increment")
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.save_btn)
+        layout.addWidget(self.save_increment)
+        return layout
 
     def _create_filename_ui(self):
         layout = self._create_filename_headers()
