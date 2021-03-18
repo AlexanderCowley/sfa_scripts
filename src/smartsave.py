@@ -51,6 +51,10 @@ class SmartSaveUI(QtWidgets.QDialog):
         layout.addWidget(self.descriptor_header_label, 0, 0)
         layout.addWidget(self.task_header_label, 0, 2)
         layout.addWidget(self.ver_header_label, 0, 4)
+        layout.addWidget(self.descriptor_le, 1, 0)
+        layout.addWidget(self.task_le, 1, 2)
+        layout.addWidget(self.ver_sbx, 1, 4)
+        layout.addWidget(self.ext_label, 1, 5)
         return layout
 
     def _create_folder_ui(self):
