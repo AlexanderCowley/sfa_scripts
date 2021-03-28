@@ -102,9 +102,11 @@ class SmartSaveUI(QtWidgets.QDialog):
     def cancel(self):
         self.close()
 
+    @QtCore.Slot()
     def save(self):
         pass
 
+    @QtCore.Slot()
     def increment_save(self):
         pass
 
