@@ -23,6 +23,7 @@ class SmartSaveUI(QtWidgets.QDialog):
         self.setWindowFlags(self.windowFlags() ^
                             QtCore.Qt.WindowContextHelpButtonHint)
         self.create_ui()
+        self.create_connections()
 
     def create_ui(self):
         self.title_label = QtWidgets.QLabel("Smart Save")
@@ -41,7 +42,7 @@ class SmartSaveUI(QtWidgets.QDialog):
 
     def _create_button_ui(self):
         self.save_btn = QtWidgets.QPushButton("Save")
-        self.save_increment = QtWidgets.QPushButton("Save Increment")
+        self.save_increment_btn = QtWidgets.QPushButton("Save Increment")
         self.cancel_btn = QtWidgets.QPushButton("Cancel")
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.save_btn)
@@ -93,8 +94,19 @@ class SmartSaveUI(QtWidgets.QDialog):
         return layout
 
     def create_connections(self):
+        self.save_btn.clicked.connect(self.save)
+        self.save_increment_btn.clicked.connect(self.increment_save())
         self.cancel_btn.clicked.connect(self.cancel)
 
+    @QtCore.Slot()
+    def cancel(self):
+        self.close()
+
+    def save(self):
+        pass
+
+    def increment_save(self):
+        pass
 
 class SceneFile(object):
     """An abstract representation of a Scene File"""
