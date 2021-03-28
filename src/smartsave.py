@@ -46,7 +46,7 @@ class SmartSaveUI(QtWidgets.QDialog):
         self.cancel_btn = QtWidgets.QPushButton("Cancel")
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.save_btn)
-        layout.addWidget(self.save_increment)
+        layout.addWidget(self.save_increment_btn)
         layout.addWidget(self.cancel_btn)
         return layout
 
@@ -109,6 +109,7 @@ class SmartSaveUI(QtWidgets.QDialog):
     @QtCore.Slot()
     def increment_save(self):
         pass
+
 
 class SceneFile(object):
     """An abstract representation of a Scene File"""
