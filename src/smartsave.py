@@ -97,6 +97,7 @@ class SmartSaveUI(QtWidgets.QDialog):
         self.save_btn.clicked.connect(self.save)
         self.save_increment_btn.clicked.connect(self.increment_save())
         self.cancel_btn.clicked.connect(self.cancel)
+        self.folder_browse_button.clicked.connect(self.browse_dir)
 
     @QtCore.Slot()
     def cancel(self):
@@ -109,6 +110,14 @@ class SmartSaveUI(QtWidgets.QDialog):
     @QtCore.Slot()
     def increment_save(self):
         pass
+
+    @QtCore.Slot()
+    def browse_dir(self):
+        directory = QtWidgets.QFileDialog.getExistingDirectory(
+            self, "Select Directory", self.folder_le.text(),
+            QtWidgets.QFileDialog.ShowDirsOnly |
+            QtWidgets.QFileDialog.DontResolveSymlinks)
+        self.folder_le.setText(directory)
 
 
 class SceneFile(object):
