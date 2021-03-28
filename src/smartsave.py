@@ -42,9 +42,11 @@ class SmartSaveUI(QtWidgets.QDialog):
     def _create_button_ui(self):
         self.save_btn = QtWidgets.QPushButton("Save")
         self.save_increment = QtWidgets.QPushButton("Save Increment")
+        self.cancel_btn = QtWidgets.QPushButton("Cancel")
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.save_btn)
         layout.addWidget(self.save_increment)
+        layout.addWidget(self.cancel_btn)
         return layout
 
     def _create_filename_ui(self):
@@ -52,7 +54,7 @@ class SmartSaveUI(QtWidgets.QDialog):
         self.descriptor_le = QtWidgets.QLineEdit("main")
         self.descriptor_le.setMinimumWidth(100)
         self.task_le = QtWidgets.QLineEdit("model")
-        self.task_le.setFixedWidth(50)
+        self.task_le.setFixedWidth(56)
         self.ver_sbx = QtWidgets.QSpinBox()
         self.ver_sbx.setButtonSymbols(
             QtWidgets.QAbstractSpinBox.PlusMinus)
@@ -89,6 +91,9 @@ class SmartSaveUI(QtWidgets.QDialog):
         layout.addWidget(self.folder_le)
         layout.addWidget(self.folder_browse_button)
         return layout
+
+    def create_connections(self):
+        self.cancel_btn.clicked.connect(self.cancel)
 
 
 class SceneFile(object):
