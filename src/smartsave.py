@@ -65,7 +65,7 @@ class SmartSaveUI(QtWidgets.QDialog):
         self.ver_sbx.setValue(self.scenefile.ver)
         self.ext_label = QtWidgets.QLabel(".ma")
         layout.addWidget(self.descriptor_le, 1, 0)
-        layout.addWidget(QtWidgets.QLabel("_"), 1, 0)
+        layout.addWidget(QtWidgets.QLabel("_"), 1, 1)
         layout.addWidget(self.task_le, 1, 2)
         layout.addWidget(QtWidgets.QLabel("_v"), 1, 3)
         layout.addWidget(self.ver_sbx, 1, 4)
@@ -126,7 +126,9 @@ class SceneFile(object):
     """An abstract representation of a Scene File"""
 
     def __init__(self, path=None):
-        self.folder_path = Path()
+        self.folder_path = Path(cmds.workspace(query=True,
+                                               rootDirectory=True)
+                                )/"scenes"
         self.descriptor = "main"
         self.task = "model"
         self.ver = 1
