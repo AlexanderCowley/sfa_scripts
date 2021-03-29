@@ -43,7 +43,8 @@ class SmartSaveUI(QtWidgets.QDialog):
 
     def _create_button_ui(self):
         self.save_btn = QtWidgets.QPushButton("Save")
-        self.save_increment_btn = QtWidgets.QPushButton("Save Increment")
+        self.save_increment_btn = QtWidgets.QPushButton(
+            "Save Increment")
         self.cancel_btn = QtWidgets.QPushButton("Cancel")
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.save_btn)
@@ -112,6 +113,7 @@ class SmartSaveUI(QtWidgets.QDialog):
         self.scenefile.task = self.task_le.text()
         self.scenefile.ver = self.ver_sbx.value()
         self.scenefile.ext = self.ext_label.text()
+        self.scenefile.save()
 
     @QtCore.Slot()
     def _increment_save(self):
@@ -131,8 +133,8 @@ class SceneFile(object):
 
     def __init__(self, path=None):
         self._folder_path = Path(cmds.workspace(query=True,
-                                               rootDirectory=True)
-                                )/"scenes"
+                                                rootDirectory=True)
+                                 ) / "scenes"
         self.descriptor = "main"
         self.task = "model"
         self.ver = 1
@@ -178,7 +180,7 @@ class SceneFile(object):
         except RuntimeError as err:
             log.warning("Missing directory in path. "
                         "Creating directories...")
-            self.folder_path.mkdir_p()
+            self.folder_path.makedirs_p()
             return pmc.system.saveAs(self.path)
 
     def next_avail_version(self):
