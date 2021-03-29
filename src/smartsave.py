@@ -19,7 +19,9 @@ class SmartSaveUI(QtWidgets.QDialog):
         super(SmartSaveUI, self).__init__(parent=maya_main_window())
         self.setWindowTitle("Smart Save")
         self.setMinimumWidth(500)
-        self.setMaximumHeight(200)
+        self.setMaximumWidth(800)
+        self.setMinimumHeight(220)
+        self.setMaximumHeight(250)
         self.setWindowFlags(self.windowFlags() ^
                             QtCore.Qt.WindowContextHelpButtonHint)
         self.scenefile = SceneFile()
@@ -90,7 +92,7 @@ class SmartSaveUI(QtWidgets.QDialog):
                               (rootDirectory=True, query=True))
         default_folder = default_folder / "scenes"
         self.folder_le = QtWidgets.QLineEdit(default_folder)
-        self.folder_browse_button = QtWidgets.QPushButton("...")
+        self.folder_browse_button = QtWidgets.QPushButton("Browse...")
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.folder_le)
         layout.addWidget(self.folder_browse_button)
