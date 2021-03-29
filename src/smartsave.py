@@ -98,7 +98,7 @@ class SmartSaveUI(QtWidgets.QDialog):
 
     def create_connections(self):
         self.save_btn.clicked.connect(self._save)
-        self.save_increment_btn.clicked.connect(self._save_increment())
+        self.save_increment_btn.clicked.connect(self._save_increment)
         self.cancel_btn.clicked.connect(self._cancel)
         self.folder_browse_button.clicked.connect(self._browse_dir)
 
@@ -108,6 +108,7 @@ class SmartSaveUI(QtWidgets.QDialog):
 
     @QtCore.Slot()
     def _save_increment(self):
+        print("save increment on")
         self._set_scenefile_properties_from_ui()
         self.scenefile.save_increment()
         self.ver_sbx.setValue(self.scenefile.ver)
