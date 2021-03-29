@@ -130,7 +130,7 @@ class SceneFile(object):
     """An abstract representation of a Scene File"""
 
     def __init__(self, path=None):
-        self.folder_path = Path(cmds.workspace(query=True,
+        self._folder_path = Path(cmds.workspace(query=True,
                                                rootDirectory=True)
                                 )/"scenes"
         self.descriptor = "main"
@@ -144,6 +144,14 @@ class SceneFile(object):
             log.warning("Initialize with default properties")
             return
         self._init_from_path(path)
+
+    @property
+    def folder_path(self):
+        return self._folder_path
+
+    @folder_path.setter
+    def folder_path(self, new_val):
+        self._folder_path = Path(new_val)
 
     @property
     def filename(self):
