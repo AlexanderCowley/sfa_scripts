@@ -96,25 +96,29 @@ class SmartSaveUI(QtWidgets.QDialog):
         return layout
 
     def create_connections(self):
-        self.save_btn.clicked.connect(self.save)
-        self.save_increment_btn.clicked.connect(self.increment_save())
-        self.cancel_btn.clicked.connect(self.cancel)
-        self.folder_browse_button.clicked.connect(self.browse_dir)
+        self.save_btn.clicked.connect(self._save)
+        self.save_increment_btn.clicked.connect(self._increment_save())
+        self.cancel_btn.clicked.connect(self._cancel)
+        self.folder_browse_button.clicked.connect(self._browse_dir)
 
     @QtCore.Slot()
-    def cancel(self):
+    def _cancel(self):
         self.close()
 
     @QtCore.Slot()
-    def save(self):
+    def _save(self):
+        self.scenefile.folder_path = self.folder_le.text()
+        self.scenefile.descriptor = self.descriptor_le.text()
+        self.scenefile.task = self.task_le.text()
+        self.scenefile.ver = self.ver_sbx.value()
+        self.scenefile.ext = self.ext_label.text()
+
+    @QtCore.Slot()
+    def _increment_save(self):
         pass
 
     @QtCore.Slot()
-    def increment_save(self):
-        pass
-
-    @QtCore.Slot()
-    def browse_dir(self):
+    def _browse_dir(self):
         directory = QtWidgets.QFileDialog.getExistingDirectory(
             self, "Select Directory", self.folder_le.text(),
             QtWidgets.QFileDialog.ShowDirsOnly |
