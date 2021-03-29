@@ -98,7 +98,7 @@ class SmartSaveUI(QtWidgets.QDialog):
 
     def create_connections(self):
         self.save_btn.clicked.connect(self._save)
-        self.save_increment_btn.clicked.connect(self._increment_save())
+        self.save_increment_btn.clicked.connect(self._save_increment())
         self.cancel_btn.clicked.connect(self._cancel)
         self.folder_browse_button.clicked.connect(self._browse_dir)
 
@@ -107,17 +107,22 @@ class SmartSaveUI(QtWidgets.QDialog):
         self.close()
 
     @QtCore.Slot()
+    def _save_increment(self):
+        self._set_scenefile_properties_from_ui()
+        self.scenefile.save_increment()
+        self.ver_sbx.setValue(self.scenefile.ver)
+
+    @QtCore.Slot()
     def _save(self):
+        self._set_scenefile_properties_from_ui()
+        self.scenefile.save()
+
+    def _set_scenefile_properties_from_ui(self):
         self.scenefile.folder_path = self.folder_le.text()
         self.scenefile.descriptor = self.descriptor_le.text()
         self.scenefile.task = self.task_le.text()
         self.scenefile.ver = self.ver_sbx.value()
         self.scenefile.ext = self.ext_label.text()
-        self.scenefile.save()
-
-    @QtCore.Slot()
-    def _increment_save(self):
-        pass
 
     @QtCore.Slot()
     def _browse_dir(self):
@@ -199,6 +204,6 @@ class SceneFile(object):
         latest_scene_num = int(latest_scene_files.split("_v")[-1])
         return latest_scene_num + 1
 
-    def increment_save(self):
+    def save_increment(self):
         self.ver = self.next_avail_version()
         self.save()
