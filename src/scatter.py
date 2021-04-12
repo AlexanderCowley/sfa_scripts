@@ -3,6 +3,7 @@ from shiboken2 import wrapInstance
 import maya.OpenMayaUI as openMUI
 import maya.cmds as cmds
 import logging
+import random
 
 log = logging.getLogger(__name__)
 
@@ -54,10 +55,11 @@ class ScatterData(object):
         for self.instance in num_vertices:
             self.source_instance = \
                 cmds.instance(source,
-                              name= source + "inst_#")
+                              name=source + "inst_#")
             cmds.parent(self.source_instance,
                         self.grp_instances)
             self.move_instances(self.instance, self.source_instance)
+            self.random_rot(self.source_instance)
 
     def move_instances(self, inst_vert, inst_source):
         self.pos = cmds.xform([inst_vert], query=True, translation=True,
@@ -65,3 +67,7 @@ class ScatterData(object):
         print(self.pos)
         print(inst_source)
         cmds.xform(inst_source, translation=self.pos)
+
+    def random_rot(self, result):
+        random_rot = random.uniform(0, 360)
+        cmds.rotate(random_rot, random_rot, random_rot, result)
