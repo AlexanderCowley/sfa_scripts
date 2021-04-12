@@ -21,10 +21,8 @@ class ScatterUI(QtWidgets.QDialog):
 "Randomize the Scale: Have the user determine the min and max of scale"
 "Must be for all three axis"
 "Have it start at 1.0 and increase based on that. 1.20 is 20% scaled"
-"Must be applied to the transform node attributes of the instance"
+
 "Randomize Rotation Offset: User specifies min max"
-"Angle must be specified in degrees from 0 to 360"
-"Must be applied to the transform node attributes"
 
 
 class ScatterData(object):
@@ -70,13 +68,13 @@ class ScatterData(object):
         cmds.xform(inst_source, translation=self.pos)
 
     def random_rot(self, result):
-        random_rot = random.uniform(0, 360)
-        cmds.rotate(random_rot, random_rot, random_rot, result)
+        self.random_rot = random.uniform(0, 360)
+        cmds.rotate(self.random_rot, self.random_rot,
+                    self.random_rot, result)
 
     def random_scaling(self, result):
-        min_val = 1
-        max_val = 5
-        random_scale = random.uniform(min_val, max_val)
-        cmds.scale(random_scale, random_scale,
-                   random_scale, result)
+        self.min_val = 1
+        self.max_val = 5
+        random_scale = random.uniform(self.min_val, self.max_val)
+        cmds.scale(random_scale, random_scale, random_scale, result)
 
