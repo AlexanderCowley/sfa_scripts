@@ -10,19 +10,102 @@ random.seed(1465)
 log = logging.getLogger(__name__)
 
 
+def maya_main_window():
+    main_window = openMUI.MQtUtil_mainWindow()
+    return wrapInstance(long(main_window), QtWidgets.QDialog)
+
+
 class ScatterUI(QtWidgets.QDialog):
 
     def __init__(self):
-        pass
+        super(ScatterUI, self).__init__(parent=maya_main_window())
+        self.setWindowTitle("Scatter Tool")
+        self.setMinimumWidth(500)
+        self.setMaximumWidth(700)
+        self.setMinimumHeight(500)
+        self.setMaximumHeight(700)
+        self.setWindowFlags(self.windowFlags() ^
+                            QtCore.Qt.WindowContextHelpButtonHint)
+        self.source_obj = None
+        self.dest_obj = None
+        self.scatter = ScatterData(self.source_obj,
+                                   self.dest_obj)
+        self.create_ui()
+        self.create_connections()
+        self.source_obj = self.source_obj_cmbo.currentText()
+        self.dest_obj = self.dest_obj_cmbo.currentText()
+        print(self.source_obj)
+        print(self.dest_obj)
 
+    def create_ui(self):
+        self.title_label = QtWidgets.QLabel("Scatter")
+        self.title_label.setStyleSheet("font: bold 20px")
+        self.source_header_lbl = QtWidgets.QLabel("Source Object")
+        self.destination_header_lbl = \
+            QtWidgets.QLabel("Destination Object")
+        self.object_layout = self._select_objects_layout()
+        self.button_layout = self._create_buttons_ui()
+        self.main_layout = QtWidgets.QVBoxLayout()
+        self.main_layout.addWidget(self.title_label)
+        self.main_layout.addLayout(self.object_layout)
+        self.main_layout.addLayout(self.button_layout)
+        self.setLayout(self.main_layout)
 
-"Needs:"
-"When applied:"
-"Randomize the Scale: Have the user determine the min and max of scale"
-"Must be for all three axis"
-"Have it start at 1.0 and increase based on that. 1.20 is 20% scaled"
+    def _select_objects_layout(self):
+        layout = self._create_object_headers()
+        self.source_obj_cmbo = QtWidgets.QComboBox()
+        self.dest_obj_cmbo = QtWidgets.QComboBox()
+        self.source_obj_cmbo_init = self._create_combo_list()
+        self.dest_obj_cmbo_init = self._create_combo_list()
+        self.source_obj_cmbo.setMinimumWidth(100)
+        self.source_obj_cmbo.setMaximumWidth(120)
+        self.source_obj_cmbo.addItems(self.source_obj_cmbo_init)
+        self.dest_obj_cmbo.setMinimumWidth(100)
+        self.dest_obj_cmbo.setMaximumWidth(120)
+        self.dest_obj_cmbo.addItems(self.dest_obj_cmbo_init)
+        layout.addWidget(self.source_obj_cmbo, 3, 1)
+        layout.addWidget(self.dest_obj_cmbo, 2, 1)
+        return layout
 
-"Randomize Rotation Offset: User specifies min max"
+    def _create_combo_list(self):
+        self.outliner_list = cmds.ls(transforms=True)
+        for i in self.outliner_list:
+            if i != "p*#":
+                self.outliner_list.remove(i)
+        return self.outliner_list
+
+    def _create_object_headers(self):
+        self.source_header_lbl = QtWidgets.QLabel("Source Object")
+        self.source_header_lbl.setStyleSheet("font: bold 20px")
+        self.destination_header_lbl = \
+            QtWidgets.QLabel("Destination Object")
+        self.destination_header_lbl.setStyleSheet("font: bold 20px")
+        layout = QtWidgets.QGridLayout()
+        layout.addWidget(self.source_header_lbl, 3, 0)
+        layout.addWidget(self.destination_header_lbl, 2, 0)
+        return layout
+
+    def _create_buttons_ui(self):
+        self.scatter_btn = QtWidgets.QPushButton("Scatter")
+        self.cancel_btn = QtWidgets.QPushButton("Cancel")
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.scatter_btn)
+        layout.addWidget(self.cancel_btn)
+        return layout
+
+    def create_connections(self):
+        self.scatter_btn.clicked.connect(self._scatter_connection)
+        self.cancel_btn.clicked.connect(self._cancel)
+
+    @QtCore.Slot()
+    def _scatter_connection(self):
+        print(self.source_obj)
+        self.scatterInstance = ScatterData(self.source_obj,
+                                           self.dest_obj)
+
+    @QtCore.Slot()
+    def _cancel(self):
+        self.close()
 
 
 class ScatterData(object):
@@ -30,6 +113,9 @@ class ScatterData(object):
     def __init__(self, source_object=None, destination_object=None):
         self.source_object = source_object
         self.destination_object = destination_object
+        if not self.source_object and not self.destination_object:
+            log.warning("Initializing")
+            return
         self.vert_list = self.get_vertices(destination_object)
         self.create_instances(source_object, self.vert_list)
         if not source_object:
