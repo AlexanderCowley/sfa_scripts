@@ -5,6 +5,8 @@ import maya.cmds as cmds
 import logging
 import random
 
+random.seed(1465)
+
 log = logging.getLogger(__name__)
 
 
@@ -60,14 +62,21 @@ class ScatterData(object):
                         self.grp_instances)
             self.move_instances(self.instance, self.source_instance)
             self.random_rot(self.source_instance)
+            self.random_scaling(self.source_instance)
 
     def move_instances(self, inst_vert, inst_source):
         self.pos = cmds.xform([inst_vert], query=True, translation=True,
                               worldSpace=True)
-        print(self.pos)
-        print(inst_source)
         cmds.xform(inst_source, translation=self.pos)
 
     def random_rot(self, result):
         random_rot = random.uniform(0, 360)
         cmds.rotate(random_rot, random_rot, random_rot, result)
+
+    def random_scaling(self, result):
+        min_val = 1
+        max_val = 5
+        random_scale = random.uniform(min_val, max_val)
+        cmds.scale(random_scale, random_scale,
+                   random_scale, result)
+
