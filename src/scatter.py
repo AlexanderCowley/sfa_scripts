@@ -26,16 +26,9 @@ class ScatterUI(QtWidgets.QDialog):
         self.setMaximumHeight(700)
         self.setWindowFlags(self.windowFlags() ^
                             QtCore.Qt.WindowContextHelpButtonHint)
-        self.source_obj = None
-        self.dest_obj = None
-        self.scatter = ScatterData(self.source_obj,
-                                   self.dest_obj)
+        self.scatter_data = ScatterData()
         self.create_ui()
         self.create_connections()
-        self.source_obj = self.source_obj_cmbo.currentText()
-        self.dest_obj = self.dest_obj_cmbo.currentText()
-        print(self.source_obj)
-        print(self.dest_obj)
 
     def create_ui(self):
         self.title_label = QtWidgets.QLabel("Scatter")
@@ -68,11 +61,11 @@ class ScatterUI(QtWidgets.QDialog):
         return layout
 
     def _create_combo_list(self):
-        self.outliner_list = cmds.ls(transforms=True)
-        for i in self.outliner_list:
+        self.outline_list = cmds.ls(transforms=True)
+        for i in self.outline_list:
             if i != "p*#":
-                self.outliner_list.remove(i)
-        return self.outliner_list
+                self.outline_list.remove(i)
+        return self.outline_list
 
     def _create_object_headers(self):
         self.source_header_lbl = QtWidgets.QLabel("Source Object")
@@ -100,8 +93,6 @@ class ScatterUI(QtWidgets.QDialog):
     @QtCore.Slot()
     def _scatter_connection(self):
         print(self.source_obj)
-        self.scatterInstance = ScatterData(self.source_obj,
-                                           self.dest_obj)
 
     @QtCore.Slot()
     def _cancel(self):
@@ -113,11 +104,6 @@ class ScatterData(object):
     def __init__(self, source_object=None, destination_object=None):
         self.source_object = source_object
         self.destination_object = destination_object
-        if not self.source_object and not self.destination_object:
-            log.warning("Initializing")
-            return
-        self.vert_list = self.get_vertices(destination_object)
-        self.create_instances(source_object, self.vert_list)
         if not source_object:
             log.warning("Select a source object to scatter")
         if not destination_object:
@@ -145,6 +131,7 @@ class ScatterData(object):
             cmds.parent(self.source_instance,
                         self.grp_instances)
             self.move_instances(self.instance, self.source_instance)
+            print(self.source_instance)
             self.random_rot(self.source_instance)
             self.random_scaling(self.source_instance)
 
