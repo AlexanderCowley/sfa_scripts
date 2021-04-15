@@ -131,7 +131,7 @@ class ScatterData(object):
             self.instances_list += self.instance
             cmds.parent(self.source_instance,
                         self.grp_instances)
-            print(self.source_instance)
+            print(self.instances_list)
         return self.instances_list
 
     def move_instances(self, inst_vert, inst_source):
