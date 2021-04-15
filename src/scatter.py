@@ -121,6 +121,10 @@ class ScatterData(object):
     def destination(self):
         return self._destination
 
+    @destination.setter
+    def destination(self, new_value):
+        self._destination = new_value
+
     def get_vertices(self):
         self.obj_instances = cmds.ls(self.destination,
                                      orderedSelection=True,
