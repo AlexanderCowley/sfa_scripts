@@ -99,8 +99,8 @@ class ScatterUI(QtWidgets.QDialog):
 class ScatterData(object):
 
     def __init__(self, source_object=None, destination_object=None):
-        self.source_object = source_object
-        self.destination_object = destination_object
+        self.source_object = ""
+        self.destination_object = ""
         if not source_object:
             log.warning("Select a source object to scatter")
             return
@@ -122,17 +122,17 @@ class ScatterData(object):
 
     def create_instances(self, source, num_vertices):
         self.grp_instances = cmds.group(empty=True,
-                                        name="grp_scatter#")
+                                        name="group_scatter#")
+        self.instances_list = []
         for self.instance in num_vertices:
             self.source_instance = \
                 cmds.instance(source,
                               name=source + "inst_#")
+            self.instances_list += self.instance
             cmds.parent(self.source_instance,
                         self.grp_instances)
-            self.move_instances(self.instance, self.source_instance)
             print(self.source_instance)
-            self.random_rot(self.source_instance)
-            self.random_scaling(self.source_instance)
+        return self.instances_list
 
     def move_instances(self, inst_vert, inst_source):
         self.pos = cmds.xform([inst_vert], query=True, translation=True,
