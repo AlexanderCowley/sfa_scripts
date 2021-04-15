@@ -99,17 +99,30 @@ class ScatterUI(QtWidgets.QDialog):
 class ScatterData(object):
 
     def __init__(self, source_object=None, destination_object=None):
-        self.source_object = ""
-        self.destination_object = ""
+        self._source = ""
+        self._destination = ""
         if not source_object:
             log.warning("Select a source object to scatter")
             return
         if not destination_object:
             log.warning("Select a destination to scatter to")
             return
+        self._init_from_objects()
 
-    def get_vertices(self, destination_obj):
-        self.obj_instances = cmds.ls(destination_obj,
+    @property
+    def source(self):
+        return self._source
+
+    @source.setter
+    def source(self, new_value):
+        self._source = new_value
+
+    @property
+    def destination(self):
+        return self._destination
+
+    def get_vertices(self):
+        self.obj_instances = cmds.ls(self.destination,
                                      orderedSelection=True,
                                      flatten=True)
         self.obj_instances = \
@@ -120,14 +133,14 @@ class ScatterData(object):
                               expand=True)
         return self.obj_instances
 
-    def create_instances(self, source, num_vertices):
+    def create_instances(self, num_vertices):
         self.grp_instances = cmds.group(empty=True,
                                         name="group_scatter#")
         self.instances_list = []
         for self.instance in num_vertices:
             self.source_instance = \
-                cmds.instance(source,
-                              name=source + "inst_#")
+                cmds.instance(self.source,
+                              name=self.source + "inst_#")
             self.instances_list += self.instance
             cmds.parent(self.source_instance,
                         self.grp_instances)
@@ -149,4 +162,8 @@ class ScatterData(object):
         self.max_val = 5
         random_scale = random.uniform(self.min_val, self.max_val)
         cmds.scale(random_scale, random_scale, random_scale, result)
+
+    def _init_from_objects(self, source_object, destination_object):
+        self._source = source_object
+        self._destination = destination_object
 
