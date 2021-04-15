@@ -84,11 +84,11 @@ class ScatterUI(QtWidgets.QDialog):
         return layout
 
     def create_connections(self):
-        self.scatter_btn.clicked.connect(self._scatter_connection)
+        self.scatter_btn.clicked.connect(self._scatter)
         self.cancel_btn.clicked.connect(self._cancel)
 
     @QtCore.Slot()
-    def _scatter_connection(self):
+    def _scatter(self):
         print(self.source_obj)
 
     @QtCore.Slot()
