@@ -61,10 +61,7 @@ class ScatterUI(QtWidgets.QDialog):
         return layout
 
     def _create_combo_list(self):
-        self.outline_list = cmds.ls(transforms=True)
-        for i in self.outline_list:
-            if i != "p*#":
-                self.outline_list.remove(i)
+        self.outline_list = cmds.ls(geometry=True)
         return self.outline_list
 
     def _create_object_headers(self):
@@ -106,8 +103,10 @@ class ScatterData(object):
         self.destination_object = destination_object
         if not source_object:
             log.warning("Select a source object to scatter")
+            return
         if not destination_object:
             log.warning("Select a destination to scatter to")
+            return
 
     def get_vertices(self, destination_obj):
         self.obj_instances = cmds.ls(destination_obj,
