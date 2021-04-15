@@ -89,11 +89,15 @@ class ScatterUI(QtWidgets.QDialog):
 
     @QtCore.Slot()
     def _scatter(self):
-        print(self.source_obj)
+        self._set_object_properties_ui()
 
     @QtCore.Slot()
     def _cancel(self):
         self.close()
+
+    def _set_object_properties_ui(self):
+        self.scatter_data.source = self.source_obj_cmbo.currentText()
+        self.scatter_data.destination = self.dest_obj_cmbo.currentText()
 
 
 class ScatterData(object):
@@ -135,7 +139,7 @@ class ScatterData(object):
         self.obj_instances = \
             cmds.filterExpand(self.obj_instances, selectionMask=31,
                               expand=True)
-        return self.obj_instances
+        self.create_instances(self.obj_instances)
 
     def create_instances(self, num_vertices):
         self.grp_instances = cmds.group(empty=True,
@@ -148,13 +152,14 @@ class ScatterData(object):
             self.instances_list += self.instance
             cmds.parent(self.source_instance,
                         self.grp_instances)
-            print(self.instances_list)
-        return self.instances_list
+        print(self.instances_list)
+        self.move_instances(num_vertices, self.instances_list)
 
     def move_instances(self, inst_vert, inst_source):
-        self.pos = cmds.xform([inst_vert], query=True, translation=True,
-                              worldSpace=True)
-        cmds.xform(inst_source, translation=self.pos)
+        for i in inst_source:
+            self.pos = cmds.xform([inst_vert], query=True, translation=True,
+                                  worldSpace=True)
+            cmds.xform(inst_source, translation=self.pos)
 
     def random_rot(self, result):
         self.random_rot = random.uniform(0, 360)
