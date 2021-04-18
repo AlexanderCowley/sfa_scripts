@@ -90,6 +90,7 @@ class ScatterUI(QtWidgets.QDialog):
     @QtCore.Slot()
     def _scatter(self):
         self._set_object_properties_ui()
+        self.scatter_data.get_vertices()
 
     @QtCore.Slot()
     def _cancel(self):
@@ -105,6 +106,10 @@ class ScatterData(object):
     def __init__(self, source_object=None, destination_object=None):
         self._source = ""
         self._destination = ""
+        self._min_rot_range = 1
+        self._max_rot_range = 1
+        self._min_scale_range = 1
+        self._max_scale_range = 1
         if not source_object:
             log.warning("Select a source object to scatter")
             return
@@ -129,13 +134,43 @@ class ScatterData(object):
     def destination(self, new_value):
         self._destination = new_value
 
+    @property
+    def min_rot_range(self):
+        return self._min_rot_range
+
+    @min_rot_range.setter
+    def min_rot_range(self, new_value):
+        self.min_rot_range = new_value
+
+    @property
+    def max_rot_range(self):
+        return self._max_rot_range
+
+    @max_rot_range.setter
+    def max_rot_range(self, new_value):
+        self._max_rot_range = new_value
+
+    @property
+    def min_scale_range(self):
+        return self._min_scale_range
+
+    @min_scale_range.setter
+    def min_scale_range(self, new_value):
+        self._min_scale_range = new_value
+
+    @property
+    def max_scale_range(self):
+        return self._max_scale_range
+
+    @max_scale_range.setter
+    def max_scale_range(self, new_value):
+        self._max_scale_range = new_value
+
     def get_vertices(self):
-        self.obj_instances = cmds.ls(self.destination,
-                                     orderedSelection=True,
-                                     flatten=True)
         self.obj_instances = \
-            cmds.polyListComponentConversion(self.obj_instances,
+            cmds.polyListComponentConversion(self.destination,
                                              toVertex=True)
+        self.obj_instances = cmds.ls(self.obj_instances, flatten=True)
         self.obj_instances = \
             cmds.filterExpand(self.obj_instances, selectionMask=31,
                               expand=True)
@@ -144,27 +179,26 @@ class ScatterData(object):
     def create_instances(self, num_vertices):
         self.grp_instances = cmds.group(empty=True,
                                         name="group_scatter#")
-        self.instances_list = []
-        for self.instance in num_vertices:
+        for instance in num_vertices:
             self.source_instance = \
                 cmds.instance(self.source,
                               name=self.source + "inst_#")
-            self.instances_list += self.instance
             cmds.parent(self.source_instance,
                         self.grp_instances)
-        print(self.instances_list)
-        self.move_instances(num_vertices, self.instances_list)
+            self.move_instances(instance, self.source_instance)
+            self.random_rot(self.source_instance)
+            self.random_scaling(self.source_instance)
 
     def move_instances(self, inst_vert, inst_source):
-        for i in inst_source:
-            self.pos = cmds.xform([inst_vert], query=True, translation=True,
-                                  worldSpace=True)
-            cmds.xform(inst_source, translation=self.pos)
+        self.pos = cmds.xform(inst_vert, query=True, translation=True,
+                              worldSpace=True)
+        cmds.xform(inst_source, translation=self.pos)
 
     def random_rot(self, result):
-        self.random_rot = random.uniform(0, 360)
-        cmds.rotate(self.random_rot, self.random_rot,
-                    self.random_rot, result)
+        print("Rotation Result: " + str(result))
+        self.random_seed = random.uniform(0, 360)
+        cmds.rotate(self.random_seed, self.random_seed,
+                    self.random_seed, result)
 
     def random_scaling(self, result):
         self.min_val = 1
