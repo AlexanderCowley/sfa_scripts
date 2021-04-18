@@ -37,10 +37,12 @@ class ScatterUI(QtWidgets.QDialog):
         self.destination_header_lbl = \
             QtWidgets.QLabel("Destination Object")
         self.object_layout = self._select_objects_layout()
-        self.button_layout = self._create_buttons_ui()
+        self.button_layout = self._create_buttons_layout()
+        self.spinbox_layout = self._create_spinbox_layout()
         self.main_layout = QtWidgets.QVBoxLayout()
         self.main_layout.addWidget(self.title_label)
         self.main_layout.addLayout(self.object_layout)
+        self.main_layout.addLayout(self.spinbox_layout)
         self.main_layout.addLayout(self.button_layout)
         self.setLayout(self.main_layout)
 
@@ -71,17 +73,62 @@ class ScatterUI(QtWidgets.QDialog):
             QtWidgets.QLabel("Destination Object")
         self.destination_header_lbl.setStyleSheet("font: bold 20px")
         layout = QtWidgets.QGridLayout()
-        layout.addWidget(self.source_header_lbl, 3, 0)
+        layout.addWidget(self.source_header_lbl, 1, 0)
         layout.addWidget(self.destination_header_lbl, 2, 0)
         return layout
 
-    def _create_buttons_ui(self):
+    def _create_buttons_layout(self):
         self.scatter_btn = QtWidgets.QPushButton("Scatter")
         self.cancel_btn = QtWidgets.QPushButton("Cancel")
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.scatter_btn)
         layout.addWidget(self.cancel_btn)
         return layout
+
+    def _create_spinbox_layout(self):
+        self._set_sbx_attributes(self._create_sbx_list())
+        self._set_sbx_values(self._create_sbx_list())
+        layout = self._create_spinbox_headers()
+        self._spinboxes = self._create_sbx_list()
+        layout.addWidget(self._spinboxes[0], 2, 4)
+        layout.addWidget(self._spinboxes[1], 2, 5)
+        layout.addWidget(self._spinboxes[2], 2, 6)
+        layout.addWidget(self._spinboxes[3], 2, 7)
+        return layout
+
+    def _create_spinbox_headers(self):
+        layout = QtWidgets.QGridLayout()
+        self.rotation_header = QtWidgets.QLabel("Rotate")
+        self.min_rot_header = QtWidgets.QLabel("Min")
+        self.max_rot_header = QtWidgets.QLabel("Max")
+        self.scale_header = QtWidgets.QLabel("Scale")
+        self.min_scale_header = QtWidgets.QLabel("Min")
+        self.max_scale_header = QtWidgets.QLabel("Max")
+        return layout
+
+    def _create_sbx_list(self):
+        spin_boxes = []
+        self.min_rot_sbx = QtWidgets.QSpinBox()
+        spin_boxes.append(self.min_rot_sbx)
+        self.max_rot_sbx = QtWidgets.QSpinBox()
+        spin_boxes.append(self.max_rot_sbx)
+        self.min_scale_sbx = QtWidgets.QSpinBox()
+        spin_boxes.append(self.min_scale_sbx)
+        self.max_scale_sbx = QtWidgets.QSpinBox()
+        spin_boxes.append(self.max_scale_sbx)
+        return spin_boxes
+
+    def _set_sbx_attributes(self, sbx_list):
+        for sbx in sbx_list:
+            sbx.setButtonSymbols(QtWidgets.QAbstractSpinBox.PlusMinus)
+            sbx.setFixedWidth(50)
+        return sbx_list
+
+    def _set_sbx_values(self, sbx):
+        sbx[0].setValue(self.scatter_data.min_rot_range)
+        sbx[1].setValue(self.scatter_data.max_rot_range)
+        sbx[2].setValue(self.scatter_data.min_scale_range)
+        sbx[3].setValue(self.scatter_data.max_scale_range)
 
     def create_connections(self):
         self.scatter_btn.clicked.connect(self._scatter)
