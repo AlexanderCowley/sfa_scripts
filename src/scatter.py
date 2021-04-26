@@ -169,17 +169,17 @@ class ScatterData(object):
     def __init__(self, source_object=None, destination_object=None):
         self._source = ""
         self._destination = ""
-        self._min_rot_range = 1
-        self._max_rot_range = 1
-        self._min_scale_range = 1
-        self._max_scale_range = 1
+        self.min_rot_range = 1
+        self.max_rot_range = 1
+        self.min_scale_range = 1
+        self.max_scale_range = 1
         if not source_object:
             log.warning("Select a source object to scatter")
             return
         if not destination_object:
             log.warning("Select a destination to scatter to")
             return
-        #self._init_from_objects()
+        self._init_from_objects()
 
     @property
     def source(self):
@@ -196,38 +196,6 @@ class ScatterData(object):
     @destination.setter
     def destination(self, new_value):
         self._destination = new_value
-
-    @property
-    def min_rot_range(self):
-        return self._min_rot_range
-
-    @min_rot_range.setter
-    def min_rot_range(self, new_value):
-        self._min_rot_range = self.clamp(new_value, 0, 360)
-
-    @property
-    def max_rot_range(self):
-        return self._max_rot_range
-
-    @max_rot_range.setter
-    def max_rot_range(self, new_value):
-        self._max_rot_range = self.clamp(new_value, 0, 360)
-
-    @property
-    def min_scale_range(self):
-        return self._min_scale_range
-
-    @min_scale_range.setter
-    def min_scale_range(self, new_value):
-        self._min_scale_range = new_value
-
-    @property
-    def max_scale_range(self):
-        return self._max_scale_range
-
-    @max_scale_range.setter
-    def max_scale_range(self, new_value):
-        self._max_scale_range = new_value
 
     def get_vertices(self):
         self.obj_instances = \
