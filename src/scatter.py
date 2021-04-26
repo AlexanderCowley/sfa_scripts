@@ -88,14 +88,15 @@ class ScatterUI(QtWidgets.QDialog):
         return layout
 
     def _create_spinbox_layout(self):
-        self._set_sbx_attributes(self._create_sbx_list())
-        self._set_sbx_values(self._create_sbx_list())
+        self.sbx_collection = self._create_sbx_list()
+        self.sbx_collection = \
+            self._set_sbx_attributes(self.sbx_collection)
+        self.sbx_collection = self._set_sbx_values(self.sbx_collection)
         layout = self._create_spinbox_headers()
-        self._spinboxes = self._create_sbx_list()
-        layout.addWidget(self._spinboxes[0], 1, 0)
-        layout.addWidget(self._spinboxes[1], 2, 0)
-        layout.addWidget(self._spinboxes[2], 1, 1)
-        layout.addWidget(self._spinboxes[3], 2, 1)
+        layout.addWidget(self.sbx_collection[0], 1, 0)
+        layout.addWidget(self.sbx_collection[1], 2, 0)
+        layout.addWidget(self.sbx_collection[2], 1, 1)
+        layout.addWidget(self.sbx_collection[3], 2, 1)
         return layout
 
     def _create_spinbox_headers(self):
@@ -129,9 +130,8 @@ class ScatterUI(QtWidgets.QDialog):
     def _set_sbx_attributes(self, sbx_list):
         for sbx in sbx_list:
             sbx.setButtonSymbols(QtWidgets.QAbstractSpinBox.PlusMinus)
-            sbx.setFixedWidth(50)
-            sbx.setMinimum(0)
-            sbx.setMaximum(360)
+            sbx.setFixedWidth(100)
+            sbx.setRange(000, 360)
         return sbx_list
 
     def _set_sbx_values(self, sbx):
@@ -139,6 +139,7 @@ class ScatterUI(QtWidgets.QDialog):
         sbx[1].setValue(self.scatter_data.max_rot_range)
         sbx[2].setValue(self.scatter_data.min_scale_range)
         sbx[3].setValue(self.scatter_data.max_scale_range)
+        return sbx
 
     def create_connections(self):
         self.scatter_btn.clicked.connect(self._scatter)
@@ -154,14 +155,14 @@ class ScatterUI(QtWidgets.QDialog):
         self.close()
 
     def _set_object_properties_ui(self):
-        print(str(self.scatter_data.min_rot_range))
         self.scatter_data.source = self.source_obj_cmbo.currentText()
         self.scatter_data.destination = self.dest_obj_cmbo.currentText()
         self.scatter_data.min_rot_range = self.min_rot_sbx.value()
         self.scatter_data.max_rot_range = self.max_rot_sbx.value()
         self.scatter_data.min_scale_range = self.min_scale_sbx.value()
+        print("Min Scale Range: {0}".format(
+            str(self.scatter_data.min_scale_range)))
         self.scatter_data.max_scale_range = self.max_scale_sbx.value()
-        print(str(self.scatter_data.min_rot_range))
 
 
 class ScatterData(object):
@@ -169,17 +170,18 @@ class ScatterData(object):
     def __init__(self, source_object=None, destination_object=None):
         self._source = ""
         self._destination = ""
-        self.min_rot_range = 1
-        self.max_rot_range = 1
+        self.min_rot_range = 0
+        self.max_rot_range = 0
         self.min_scale_range = 1
         self.max_scale_range = 1
+        if not source_object and not destination_object:
+            self._init_from_objects(source_object, destination_object)
         if not source_object:
             log.warning("Select a source object to scatter")
             return
         if not destination_object:
             log.warning("Select a destination to scatter to")
             return
-        self._init_from_objects()
 
     @property
     def source(self):
@@ -245,12 +247,3 @@ class ScatterData(object):
         self.min_scale_range = 1
         self.max_scale_range = 1
 
-    def clamp(self, num, num_min, num_max):
-        if num >= num_max:
-            num = num_max
-        elif num <= num_min:
-            num = num_min
-        else:
-            num = num
-            print(num)
-        return num
