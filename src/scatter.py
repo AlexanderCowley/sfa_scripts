@@ -177,6 +177,11 @@ class ScatterUI(QtWidgets.QDialog):
         return sbx_list
 
     def _set_sbx_values(self, sbx):
+        self._set_sbx_rot_values(sbx)
+        self._set_sbx_scale_values(sbx)
+        return sbx
+
+    def _set_sbx_rot_values(self, sbx):
         sbx[0].setValue(self.scatter_data.min_rot_range[0])
         sbx[1].setValue(self.scatter_data.max_rot_range[0])
         sbx[2].setValue(self.scatter_data.min_rot_range[1])
@@ -184,13 +189,13 @@ class ScatterUI(QtWidgets.QDialog):
         sbx[4].setValue(self.scatter_data.min_rot_range[2])
         sbx[5].setValue(self.scatter_data.max_rot_range[2])
 
+    def _set_sbx_scale_values(self, sbx):
         sbx[6].setValue(self.scatter_data.min_scale_range[0])
         sbx[7].setValue(self.scatter_data.max_scale_range[0])
         sbx[8].setValue(self.scatter_data.min_scale_range[1])
         sbx[9].setValue(self.scatter_data.max_scale_range[1])
         sbx[10].setValue(self.scatter_data.min_scale_range[2])
         sbx[11].setValue(self.scatter_data.max_scale_range[2])
-        return sbx
 
     def create_connections(self):
         self.scatter_btn.clicked.connect(self._scatter)
@@ -206,21 +211,12 @@ class ScatterUI(QtWidgets.QDialog):
         self.close()
 
     def _set_object_properties_ui(self):
-        if len(cmds.ls(selection=True)) != 0:
-            self.scatter_data.destination = \
-                self.scatter_data.selection_to_vertices(
-                               cmds.ls(selection=True))
-        else:
-            self.scatter_data.destination = \
-                self.dest_obj_cmbo.currentText()
+        self._set_destination_obj()
         self.scatter_data.source = self.source_obj_cmbo.currentText()
-        self.scatter_data.min_rot_range[0] = self.min_rot_x_sbx.value()
-        self.scatter_data.max_rot_range[0] = self.max_rot_x_sbx.value()
-        self.scatter_data.min_rot_range[1] = self.min_rot_y_sbx.value()
-        self.scatter_data.max_rot_range[1] = self.max_rot_y_sbx.value()
-        self.scatter_data.min_rot_range[2] = self.min_rot_z_sbx.value()
-        self.scatter_data.max_rot_range[2] = self.max_rot_z_sbx.value()
+        self._set_rot_sbx_properties_ui()
+        self._set_scale_sbx_properties_ui()
 
+    def _set_scale_sbx_properties_ui(self):
         self.scatter_data.min_scale_range[0] = \
             self.min_scale_x_sbx.value()
         self.scatter_data.max_scale_range[0] = \
@@ -233,6 +229,23 @@ class ScatterUI(QtWidgets.QDialog):
             self.min_scale_z_sbx.value()
         self.scatter_data.max_scale_range[2] = \
             self.max_scale_z_sbx.value()
+
+    def _set_rot_sbx_properties_ui(self):
+        self.scatter_data.min_rot_range[0] = self.min_rot_x_sbx.value()
+        self.scatter_data.max_rot_range[0] = self.max_rot_x_sbx.value()
+        self.scatter_data.min_rot_range[1] = self.min_rot_y_sbx.value()
+        self.scatter_data.max_rot_range[1] = self.max_rot_y_sbx.value()
+        self.scatter_data.min_rot_range[2] = self.min_rot_z_sbx.value()
+        self.scatter_data.max_rot_range[2] = self.max_rot_z_sbx.value()
+
+    def _set_destination_obj(self):
+        if len(cmds.ls(selection=True)) != 0:
+            self.scatter_data.destination = \
+                self.scatter_data.selection_to_vertices(
+                    cmds.ls(selection=True))
+        else:
+            self.scatter_data.destination = \
+                self.dest_obj_cmbo.currentText()
 
 
 class ScatterData(object):
