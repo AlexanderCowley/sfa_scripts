@@ -257,6 +257,7 @@ class ScatterData(object):
         self.max_rot_range = [360, 360, 360]
         self.min_scale_range = [1, 1, 1]
         self.max_scale_range = [2, 2, 2]
+        self.selection_percentage = 100
         cmds.select(clear=True)
         if not source_object and not destination_object:
             self._init_from_objects(source_object, destination_object)
@@ -336,6 +337,7 @@ class ScatterData(object):
     def _init_from_objects(self, source_object, destination_object):
         self._source = source_object
         self._destination = destination_object
+        self.selection_percentage = 100
         for i in range(len(self.min_scale_range)):
             self.min_scale_range[i] = 1
         for i in range(len(self.max_scale_range)):
@@ -351,4 +353,27 @@ class ScatterData(object):
                                                        toVertex=True)
         vert_source = cmds.filterExpand(vert_source,
                                         selectionMask=31)
+        percent_amount = self.calc_percentage(len(vert_source),
+                             self.selection_percentage)
+        print("Amount of Vertices per percent: " + str(percent_amount))
+        print("Vertices List: " + str(vert_source))
+        vert_source = \
+            self.randomize_vertices_selection(
+                percent_amount, vert_source)
         return vert_source
+
+    def calc_percentage(self, list_len, percentage):
+        if not list_len:
+            log.warning("Cannot add percentage without a length")
+            return
+        if list_len <= 0:
+            log.warning("Invalid Argument")
+        if percentage >= 100:
+            percentage = 100
+        result = int((percentage/float(100)) * list_len)
+        return result
+
+    def randomize_vertices_selection(self, amount, vert_list):
+        new_vert_list = random.sample(vert_list, amount)
+        return new_vert_list
+
