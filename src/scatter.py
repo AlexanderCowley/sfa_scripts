@@ -206,8 +206,14 @@ class ScatterUI(QtWidgets.QDialog):
         self.close()
 
     def _set_object_properties_ui(self):
+        if len(cmds.ls(selection=True)) != 0:
+            self.scatter_data.destination = \
+                self.scatter_data.selection_to_vertices(
+                               cmds.ls(selection=True))
+        else:
+            self.scatter_data.destination = \
+                self.dest_obj_cmbo.currentText()
         self.scatter_data.source = self.source_obj_cmbo.currentText()
-        self.scatter_data.destination = self.dest_obj_cmbo.currentText()
         self.scatter_data.min_rot_range[0] = self.min_rot_x_sbx.value()
         self.scatter_data.max_rot_range[0] = self.max_rot_x_sbx.value()
         self.scatter_data.min_rot_range[1] = self.min_rot_y_sbx.value()
@@ -238,6 +244,7 @@ class ScatterData(object):
         self.max_rot_range = [360, 360, 360]
         self.min_scale_range = [1, 1, 1]
         self.max_scale_range = [2, 2, 2]
+        cmds.select(clear=True)
         if not source_object and not destination_object:
             self._init_from_objects(source_object, destination_object)
         if not source_object:
@@ -325,3 +332,10 @@ class ScatterData(object):
         for i in range(len(self.max_rot_range)):
             self.max_rot_range[i] = 0
 
+    def selection_to_vertices(self, vert_source):
+        vert_source = cmds.ls(selection=True, flatten=True)
+        vert_source = cmds.polyListComponentConversion(vert_source,
+                                                       toVertex=True)
+        vert_source = cmds.filterExpand(vert_source,
+                                        selectionMask=31)
+        return vert_source
