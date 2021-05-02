@@ -43,6 +43,7 @@ class ScatterUI(QtWidgets.QDialog):
         self.main_layout.addWidget(self.title_label)
         self.main_layout.addStretch()
         self.main_layout.addLayout(self.object_layout)
+        #Align Checkbox
         self.main_layout.addStretch()
         self.main_layout.addLayout(self.spinbox_layout)
         self.main_layout.addLayout(self.button_layout)
@@ -93,52 +94,102 @@ class ScatterUI(QtWidgets.QDialog):
             self._set_sbx_attributes(self.sbx_collection)
         self.sbx_collection = self._set_sbx_values(self.sbx_collection)
         layout = self._create_spinbox_headers()
-        layout.addWidget(self.sbx_collection[0], 1, 0)
-        layout.addWidget(self.sbx_collection[1], 2, 0)
-        layout.addWidget(self.sbx_collection[2], 1, 1)
-        layout.addWidget(self.sbx_collection[3], 2, 1)
+        layout.addWidget(self.sbx_collection[0], 2, 2)
+        layout.addWidget(self.sbx_collection[1], 2, 3)
+        layout.addWidget(self.sbx_collection[2], 3, 2)
+        layout.addWidget(self.sbx_collection[3], 3, 3)
+        layout.addWidget(self.sbx_collection[4], 4, 2)
+        layout.addWidget(self.sbx_collection[5], 4, 3)
+
+        layout.addWidget(self.sbx_collection[6], 2, 6)
+        layout.addWidget(self.sbx_collection[7], 2, 7)
+        layout.addWidget(self.sbx_collection[8], 3, 6)
+        layout.addWidget(self.sbx_collection[9], 3, 7)
+        layout.addWidget(self.sbx_collection[10], 4, 6)
+        layout.addWidget(self.sbx_collection[11], 4, 7)
         return layout
 
     def _create_spinbox_headers(self):
         self.rotation_header = QtWidgets.QLabel("Rotate")
+        self.rotation_header.setStyleSheet("font: bold 20px")
         self.min_rot_header = QtWidgets.QLabel("Min")
         self.max_rot_header = QtWidgets.QLabel("Max")
         self.scale_header = QtWidgets.QLabel("Scale")
+        self.scale_header.setStyleSheet("font: bold 20px")
         self.min_scale_header = QtWidgets.QLabel("Min")
         self.max_scale_header = QtWidgets.QLabel("Max")
+        self._x_lbl_rot = QtWidgets.QLabel("X")
+        self._y_lbl_rot = QtWidgets.QLabel("Y")
+        self._z_lbl_rot = QtWidgets.QLabel("Z")
+        self._x_lbl_scale = QtWidgets.QLabel("X")
+        self._y_lbl_scale = QtWidgets.QLabel("Y")
+        self._z_lbl_scale = QtWidgets.QLabel("Z")
         layout = QtWidgets.QGridLayout()
-        layout.addWidget(self.rotation_header, 0, 0)
-        layout.addWidget(self.min_rot_header, 1, 0)
-        layout.addWidget(self.max_rot_header, 2, 0)
-        layout.addWidget(self.scale_header, 0, 1)
-        layout.addWidget(self.min_scale_header, 1, 1)
-        layout.addWidget(self.max_scale_header, 2, 1)
+        layout.setColumnStretch(0, 1)
+        layout.addWidget(self.rotation_header, 0, 2)
+        layout.addWidget(self.scale_header, 0, 6)
+        layout.addWidget(self.min_rot_header, 1, 3)
+        layout.addWidget(self.max_rot_header, 1, 2)
+        layout.addWidget(self.min_scale_header, 1, 6)
+        layout.addWidget(self.max_scale_header, 1, 7)
+        layout.addWidget(self._x_lbl_rot, 2, 1)
+        layout.addWidget(self._y_lbl_rot, 3, 1)
+        layout.addWidget(self._z_lbl_rot, 4, 1)
+        layout.addWidget(self._x_lbl_scale, 2, 5)
+        layout.addWidget(self._y_lbl_scale, 3, 5)
+        layout.addWidget(self._z_lbl_scale, 4, 5)
         return layout
 
     def _create_sbx_list(self):
         spin_boxes = []
-        self.min_rot_sbx = QtWidgets.QSpinBox()
-        spin_boxes.append(self.min_rot_sbx)
-        self.max_rot_sbx = QtWidgets.QSpinBox()
-        spin_boxes.append(self.max_rot_sbx)
-        self.min_scale_sbx = QtWidgets.QSpinBox()
-        spin_boxes.append(self.min_scale_sbx)
-        self.max_scale_sbx = QtWidgets.QSpinBox()
-        spin_boxes.append(self.max_scale_sbx)
+        self.min_rot_x_sbx = QtWidgets.QSpinBox()
+        spin_boxes.append(self.min_rot_x_sbx)
+        self.max_rot_x_sbx = QtWidgets.QSpinBox()
+        spin_boxes.append(self.max_rot_x_sbx)
+        self.min_rot_y_sbx = QtWidgets.QSpinBox()
+        spin_boxes.append(self.min_rot_y_sbx)
+        self.max_rot_y_sbx = QtWidgets.QSpinBox()
+        spin_boxes.append(self.max_rot_y_sbx)
+        self.min_rot_z_sbx = QtWidgets.QSpinBox()
+        spin_boxes.append(self.min_rot_z_sbx)
+        self.max_rot_z_sbx = QtWidgets.QSpinBox()
+        spin_boxes.append(self.max_rot_z_sbx)
+
+        self.min_scale_x_sbx = QtWidgets.QSpinBox()
+        spin_boxes.append(self.min_scale_x_sbx)
+        self.max_scale_x_sbx = QtWidgets.QSpinBox()
+        spin_boxes.append(self.max_scale_x_sbx)
+        self.min_scale_y_sbx = QtWidgets.QSpinBox()
+        spin_boxes.append(self.min_scale_y_sbx)
+        self.max_scale_y_sbx = QtWidgets.QSpinBox()
+        spin_boxes.append(self.max_scale_y_sbx)
+        self.min_scale_z_sbx = QtWidgets.QSpinBox()
+        spin_boxes.append(self.min_scale_z_sbx)
+        self.max_scale_z_sbx = QtWidgets.QSpinBox()
+        spin_boxes.append(self.max_scale_z_sbx)
         return spin_boxes
 
     def _set_sbx_attributes(self, sbx_list):
         for sbx in sbx_list:
             sbx.setButtonSymbols(QtWidgets.QAbstractSpinBox.PlusMinus)
-            sbx.setFixedWidth(100)
+            sbx.setFixedWidth(80)
             sbx.setRange(000, 360)
         return sbx_list
 
     def _set_sbx_values(self, sbx):
-        sbx[0].setValue(self.scatter_data.min_rot_range)
-        sbx[1].setValue(self.scatter_data.max_rot_range)
-        sbx[2].setValue(self.scatter_data.min_scale_range)
-        sbx[3].setValue(self.scatter_data.max_scale_range)
+        sbx[0].setValue(self.scatter_data.min_rot_range[0])
+        sbx[1].setValue(self.scatter_data.max_rot_range[0])
+        sbx[2].setValue(self.scatter_data.min_rot_range[1])
+        sbx[3].setValue(self.scatter_data.max_rot_range[1])
+        sbx[4].setValue(self.scatter_data.min_rot_range[2])
+        sbx[5].setValue(self.scatter_data.max_rot_range[2])
+
+        sbx[6].setValue(self.scatter_data.min_scale_range[0])
+        sbx[7].setValue(self.scatter_data.max_scale_range[0])
+        sbx[8].setValue(self.scatter_data.min_scale_range[1])
+        sbx[9].setValue(self.scatter_data.max_scale_range[1])
+        sbx[10].setValue(self.scatter_data.min_scale_range[2])
+        sbx[11].setValue(self.scatter_data.max_scale_range[2])
         return sbx
 
     def create_connections(self):
@@ -157,12 +208,25 @@ class ScatterUI(QtWidgets.QDialog):
     def _set_object_properties_ui(self):
         self.scatter_data.source = self.source_obj_cmbo.currentText()
         self.scatter_data.destination = self.dest_obj_cmbo.currentText()
-        self.scatter_data.min_rot_range = self.min_rot_sbx.value()
-        self.scatter_data.max_rot_range = self.max_rot_sbx.value()
-        self.scatter_data.min_scale_range = self.min_scale_sbx.value()
-        print("Min Scale Range: {0}".format(
-            str(self.scatter_data.min_scale_range)))
-        self.scatter_data.max_scale_range = self.max_scale_sbx.value()
+        self.scatter_data.min_rot_range[0] = self.min_rot_x_sbx.value()
+        self.scatter_data.max_rot_range[0] = self.max_rot_x_sbx.value()
+        self.scatter_data.min_rot_range[1] = self.min_rot_y_sbx.value()
+        self.scatter_data.max_rot_range[1] = self.max_rot_y_sbx.value()
+        self.scatter_data.min_rot_range[2] = self.min_rot_z_sbx.value()
+        self.scatter_data.max_rot_range[2] = self.max_rot_z_sbx.value()
+
+        self.scatter_data.min_scale_range[0] = \
+            self.min_scale_x_sbx.value()
+        self.scatter_data.max_scale_range[0] = \
+            self.max_scale_x_sbx.value()
+        self.scatter_data.min_scale_range[1] = \
+            self.min_scale_y_sbx.value()
+        self.scatter_data.max_scale_range[1] = \
+            self.max_scale_y_sbx.value()
+        self.scatter_data.min_scale_range[2] = \
+            self.min_scale_z_sbx.value()
+        self.scatter_data.max_scale_range[2] = \
+            self.max_scale_z_sbx.value()
 
 
 class ScatterData(object):
@@ -170,10 +234,10 @@ class ScatterData(object):
     def __init__(self, source_object=None, destination_object=None):
         self._source = ""
         self._destination = ""
-        self.min_rot_range = 0
-        self.max_rot_range = 0
-        self.min_scale_range = 1
-        self.max_scale_range = 1
+        self.min_rot_range = [0, 0, 0]
+        self.max_rot_range = [360, 360, 360]
+        self.min_scale_range = [1, 1, 1]
+        self.max_scale_range = [2, 2, 2]
         if not source_object and not destination_object:
             self._init_from_objects(source_object, destination_object)
         if not source_object:
@@ -228,22 +292,36 @@ class ScatterData(object):
         cmds.xform(inst_source, translation=self.pos)
 
     def random_rot(self, result):
-        print("Rotation Result: " + str(result))
-        self.random_seed = random.uniform(self.min_rot_range,
-                                          self.max_rot_range)
-        cmds.rotate(self.random_seed, self.random_seed,
-                    self.random_seed, result)
+        self.random_seed = \
+            [random.uniform(self.min_rot_range[0],
+                            self.max_rot_range[0]),
+             random.uniform(self.min_rot_range[1],
+                            self.max_rot_range[1]),
+             random.uniform(self.min_rot_range[2],
+                            self.max_rot_range[2])]
+        cmds.rotate(self.random_seed[0], self.random_seed[1],
+                    self.random_seed[2], result)
 
     def random_scaling(self, result):
-        random_scale = random.uniform(self.min_scale_range,
-                                      self.max_scale_range)
-        cmds.scale(random_scale, random_scale, random_scale, result)
+        random_scale = \
+            [random.uniform(self.min_scale_range[0],
+                            self.max_scale_range[0]),
+             random.uniform(self.min_scale_range[1],
+                            self.max_scale_range[1]),
+             random.uniform(self.min_scale_range[2],
+                            self.max_scale_range[2])]
+        cmds.scale(random_scale[0], random_scale[1], random_scale[2],
+                   result)
 
     def _init_from_objects(self, source_object, destination_object):
         self._source = source_object
         self._destination = destination_object
-        self.min_rot_range = 0
-        self.max_rot_range = 0
-        self.min_scale_range = 1
-        self.max_scale_range = 1
+        for i in range(len(self.min_scale_range)):
+            self.min_scale_range[i] = 1
+        for i in range(len(self.max_scale_range)):
+            self.max_scale_range[i] = 1
+        for i in range(len(self.min_rot_range)):
+            self.min_rot_range[i] = 0
+        for i in range(len(self.max_rot_range)):
+            self.max_rot_range[i] = 0
 
