@@ -5,7 +5,7 @@ import maya.cmds as cmds
 import logging
 import random
 
-random.seed(1465)
+#random.seed(1465)
 
 log = logging.getLogger(__name__)
 
@@ -34,6 +34,7 @@ class ScatterUI(QtWidgets.QDialog):
         self.title_label = QtWidgets.QLabel("Scatter")
         self.title_label.setStyleSheet("font: bold 20px")
         self.object_layout = self._select_objects_layout()
+        self.sel_percent_layout = self._create_percent_sel_layout()
         self.button_layout = self._create_buttons_layout()
         self.spinbox_layout = self._create_spinbox_layout()
         self.source_header_lbl = QtWidgets.QLabel("Source Object")
@@ -43,6 +44,7 @@ class ScatterUI(QtWidgets.QDialog):
         self.main_layout.addWidget(self.title_label)
         self.main_layout.addStretch()
         self.main_layout.addLayout(self.object_layout)
+        self.main_layout.addLayout(self.sel_percent_layout)
         #Align Checkbox
         self.main_layout.addStretch()
         self.main_layout.addLayout(self.spinbox_layout)
@@ -109,6 +111,23 @@ class ScatterUI(QtWidgets.QDialog):
         layout.addWidget(self.sbx_collection[11], 4, 7)
         return layout
 
+    def _create_percent_sel_layout(self):
+        self.sel_percecnt_sbx = self._create_selected_percent_sbx()
+        layout = self._create_sel_percent_headers()
+        layout.addWidget(self.sel_percecnt_sbx, 1, 0)
+        return layout
+
+    def _create_sel_percent_headers(self):
+        self.sel_percent_lbl = QtWidgets.QLabel("Percent")
+        self.sel_percent_lbl.setStyleSheet("font: bold 20px")
+        self.sign_percent_lbl = QtWidgets.QLabel("%")
+        self.sign_percent_lbl.setStyleSheet("font: bold 25px")
+        layout = QtWidgets.QGridLayout()
+        layout.addWidget(self.sel_percent_lbl, 0, 0)
+        layout.addWidget(self.sign_percent_lbl, 1, 1)
+        return layout
+
+
     def _create_spinbox_headers(self):
         self.rotation_header = QtWidgets.QLabel("Rotate")
         self.rotation_header.setStyleSheet("font: bold 20px")
@@ -169,6 +188,15 @@ class ScatterUI(QtWidgets.QDialog):
         spin_boxes.append(self.max_scale_z_sbx)
         return spin_boxes
 
+    def _create_selected_percent_sbx(self):
+        perc_sel_sbx = QtWidgets.QSpinBox()
+        perc_sel_sbx.setButtonSymbols(
+            QtWidgets.QAbstractSpinBox.PlusMinus)
+        perc_sel_sbx.setFixedWidth(80)
+        perc_sel_sbx.setRange(1, 100)
+        perc_sel_sbx.setValue(self.scatter_data.selection_percentage)
+        return perc_sel_sbx
+
     def _set_sbx_attributes(self, sbx_list):
         for sbx in sbx_list:
             sbx.setButtonSymbols(QtWidgets.QAbstractSpinBox.PlusMinus)
@@ -211,6 +239,7 @@ class ScatterUI(QtWidgets.QDialog):
         self.close()
 
     def _set_object_properties_ui(self):
+        self._set_sel_percentage_sbx_properties_ui()
         self._set_destination_obj()
         self.scatter_data.source = self.source_obj_cmbo.currentText()
         self._set_rot_sbx_properties_ui()
@@ -238,6 +267,10 @@ class ScatterUI(QtWidgets.QDialog):
         self.scatter_data.min_rot_range[2] = self.min_rot_z_sbx.value()
         self.scatter_data.max_rot_range[2] = self.max_rot_z_sbx.value()
 
+    def _set_sel_percentage_sbx_properties_ui(self):
+        self.scatter_data.selection_percentage = \
+                 self.sel_percecnt_sbx.value()
+
     def _set_destination_obj(self):
         if len(cmds.ls(selection=True)) != 0:
             self.scatter_data.destination = \
@@ -258,6 +291,7 @@ class ScatterData(object):
         self.min_scale_range = [1, 1, 1]
         self.max_scale_range = [2, 2, 2]
         self.selection_percentage = 100
+        self.is_aligned = False
         cmds.select(clear=True)
         if not source_object and not destination_object:
             self._init_from_objects(source_object, destination_object)
@@ -311,6 +345,11 @@ class ScatterData(object):
         self.pos = cmds.xform(inst_vert, query=True, translation=True,
                               worldSpace=True)
         cmds.xform(inst_source, translation=self.pos)
+        if self.is_aligned:
+            self._constrain_normals()
+
+    def _constrain_normals(self):
+        pass
 
     def random_rot(self, result):
         self.random_seed = \
@@ -338,6 +377,7 @@ class ScatterData(object):
         self._source = source_object
         self._destination = destination_object
         self.selection_percentage = 100
+        self.is_aligned = False
         for i in range(len(self.min_scale_range)):
             self.min_scale_range[i] = 1
         for i in range(len(self.max_scale_range)):
@@ -355,8 +395,6 @@ class ScatterData(object):
                                         selectionMask=31)
         percent_amount = self.calc_percentage(len(vert_source),
                              self.selection_percentage)
-        print("Amount of Vertices per percent: " + str(percent_amount))
-        print("Vertices List: " + str(vert_source))
         vert_source = \
             self.randomize_vertices_selection(
                 percent_amount, vert_source)
