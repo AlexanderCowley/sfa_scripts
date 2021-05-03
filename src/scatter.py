@@ -35,7 +35,10 @@ class ScatterUI(QtWidgets.QDialog):
         self.title_label = QtWidgets.QLabel("Scatter")
         self.title_label.setStyleSheet("font: bold 20px")
         self.object_layout = self._select_objects_layout()
+        self.align_check_box_layout = \
+            self._create_align_check_box_layout()
         self.sel_percent_layout = self._create_percent_sel_layout()
+        self.offset_layout = self._create_offset_layout()
         self.button_layout = self._create_buttons_layout()
         self.spinbox_layout = self._create_spinbox_layout()
         self.source_header_lbl = QtWidgets.QLabel("Source Object")
@@ -45,12 +48,27 @@ class ScatterUI(QtWidgets.QDialog):
         self.main_layout.addWidget(self.title_label)
         self.main_layout.addStretch()
         self.main_layout.addLayout(self.object_layout)
+        self.main_layout.addLayout(self.align_check_box_layout)
+        self.main_layout.addStretch()
         self.main_layout.addLayout(self.sel_percent_layout)
-        #Align Checkbox
+        self.main_layout.addLayout(self.offset_layout)
         self.main_layout.addStretch()
         self.main_layout.addLayout(self.spinbox_layout)
         self.main_layout.addLayout(self.button_layout)
         self.setLayout(self.main_layout)
+
+    def _create_align_check_box_layout(self):
+        self.align_check_box = QtWidgets.QCheckBox(
+            "  Align \nInstances")
+        layout = self._create_align_check_box_headers()
+        layout.addWidget(self.align_check_box, 0, 1)
+        return layout
+
+    def _create_align_check_box_headers(self):
+        #self.align_check_box_lbl = QtWidgets.QLabel("Align Instances")
+        layout = QtWidgets.QGridLayout()
+        #layout.addWidget(self.align_check_box_lbl, 0, 0)
+        return layout
 
     def _select_objects_layout(self):
         layout = self._create_object_headers()
@@ -113,9 +131,9 @@ class ScatterUI(QtWidgets.QDialog):
         return layout
 
     def _create_percent_sel_layout(self):
-        self.sel_percecnt_sbx = self._create_selected_percent_sbx()
+        self.sel_percent_sbx = self._create_selected_percent_sbx()
         layout = self._create_sel_percent_headers()
-        layout.addWidget(self.sel_percecnt_sbx, 1, 0)
+        layout.addWidget(self.sel_percent_sbx, 1, 0)
         return layout
 
     def _create_sel_percent_headers(self):
@@ -127,7 +145,6 @@ class ScatterUI(QtWidgets.QDialog):
         layout.addWidget(self.sel_percent_lbl, 0, 0)
         layout.addWidget(self.sign_percent_lbl, 1, 1)
         return layout
-
 
     def _create_spinbox_headers(self):
         self.rotation_header = QtWidgets.QLabel("Rotate")
@@ -198,6 +215,46 @@ class ScatterUI(QtWidgets.QDialog):
         perc_sel_sbx.setValue(self.scatter_data.selection_percentage)
         return perc_sel_sbx
 
+    def _create_offset_layout(self):
+        self.offset_sbx = self._create_offset_sbx()
+        layout = self._create_offset_headers()
+        layout.setColumnStretch(5, .5)
+        layout.addWidget(self.offset_sbx[0], 2, 4)
+        layout.addWidget(self.offset_sbx[1], 2, 5)
+        layout.addWidget(self.offset_sbx[2], 2, 6)
+        return layout
+
+    def _create_offset_headers(self):
+        self.offset_lbl = QtWidgets.QLabel("Offset")
+        self.offset_lbl.setStyleSheet("font: bold 16px")
+        self.x_axis_lbl = QtWidgets.QLabel("X")
+        self.offset_lbl.setStyleSheet("font: bold 20px")
+        self.y_axis_lbl = QtWidgets.QLabel("Y")
+        self.offset_lbl.setStyleSheet("font: bold 20px")
+        self.z_axis_lbl = QtWidgets.QLabel("Z")
+        self.offset_lbl.setStyleSheet("font: bold 20px")
+        layout = QtWidgets.QGridLayout()
+        layout.setColumnStretch(0, 1)
+        layout.addWidget(self.x_axis_lbl, 1, 4)
+        layout.addWidget(self.y_axis_lbl, 1, 5)
+        layout.addWidget(self.z_axis_lbl, 1, 6)
+        layout.addWidget(self.offset_lbl, 0, 5)
+        return layout
+
+    def _create_offset_sbx(self):
+        pos_offset_sbx = [0, 0, 0]
+        for i in range(len(pos_offset_sbx)):
+            pos_offset_sbx[i] = QtWidgets.QDoubleSpinBox()
+            pos_offset_sbx[i].setButtonSymbols(
+                QtWidgets.QAbstractSpinBox.PlusMinus)
+            pos_offset_sbx[i].setFixedWidth(80)
+            pos_offset_sbx[i].setRange(-9.99, 1)
+            pos_offset_sbx[i].setStepType(
+                QtWidgets.QAbstractSpinBox.AdaptiveDecimalStepType)
+            pos_offset_sbx[i].setValue(
+                self.scatter_data.offset_range[i])
+        return pos_offset_sbx
+
     def _set_sbx_attributes(self, sbx_list):
         for sbx in sbx_list:
             sbx.setButtonSymbols(QtWidgets.QAbstractSpinBox.PlusMinus)
@@ -245,6 +302,13 @@ class ScatterUI(QtWidgets.QDialog):
         self.scatter_data.source = self.source_obj_cmbo.currentText()
         self._set_rot_sbx_properties_ui()
         self._set_scale_sbx_properties_ui()
+        self._set_offset_sbx_values()
+        self.scatter_data.is_aligned = self.align_check_box.isChecked()
+
+    def _set_offset_sbx_values(self):
+        self.scatter_data.offset_range[0] = self.offset_sbx[0].value()
+        self.scatter_data.offset_range[1] = self.offset_sbx[1].value()
+        self.scatter_data.offset_range[2] = self.offset_sbx[2].value()
 
     def _set_scale_sbx_properties_ui(self):
         self.scatter_data.min_scale_range[0] = \
@@ -270,7 +334,7 @@ class ScatterUI(QtWidgets.QDialog):
 
     def _set_sel_percentage_sbx_properties_ui(self):
         self.scatter_data.selection_percentage = \
-                 self.sel_percecnt_sbx.value()
+                 self.sel_percent_sbx.value()
 
     def _set_destination_obj(self):
         if len(cmds.ls(selection=True)) != 0:
@@ -291,6 +355,7 @@ class ScatterData(object):
         self.max_rot_range = [360, 360, 360]
         self.min_scale_range = [1, 1, 1]
         self.max_scale_range = [2, 2, 2]
+        self.offset_range = [0, 0, 0]
         self.selection_percentage = 100
         self.is_aligned = False
         cmds.select(clear=True)
@@ -349,12 +414,18 @@ class ScatterData(object):
         if self.is_aligned:
             self._constrain_normals(inst_vert, inst_source)
 
+        cmds.move(self.offset_range[0],
+                  self.offset_range[1], self.offset_range[2],
+                  inst_source, relative=True)
+
     def _constrain_normals(self, vertex_instance, source_instance):
+        print("constrain normals method")
         mesh_vert = pmc.MeshVertex(vertex_instance)
         mesh_vert.getNormal()
         constraint = cmds.normalConstraint(vertex_instance,
-                                           source_instance)
-        cmds.delete(constraint)
+                                           source_instance,
+                                           aimVector=[0.0, 1.0, 0.0])
+        #cmds.delete(constraint)
 
     def random_rot(self, result):
         self.random_seed = \
@@ -391,6 +462,8 @@ class ScatterData(object):
             self.min_rot_range[i] = 0
         for i in range(len(self.max_rot_range)):
             self.max_rot_range[i] = 0
+        for i in range(len(self.offset_range)):
+            self.offset_range[i] = 0
 
     def selection_to_vertices(self, vert_source):
         vert_source = cmds.ls(selection=True, flatten=True)
