@@ -2,6 +2,7 @@ from PySide2 import QtWidgets, QtCore
 from shiboken2 import wrapInstance
 import maya.OpenMayaUI as openMUI
 import maya.cmds as cmds
+import pymel.core as pmc
 import logging
 import random
 
@@ -346,10 +347,14 @@ class ScatterData(object):
                               worldSpace=True)
         cmds.xform(inst_source, translation=self.pos)
         if self.is_aligned:
-            self._constrain_normals()
+            self._constrain_normals(inst_vert, inst_source)
 
-    def _constrain_normals(self):
-        pass
+    def _constrain_normals(self, vertex_instance, source_instance):
+        mesh_vert = pmc.MeshVertex(vertex_instance)
+        mesh_vert.getNormal()
+        constraint = cmds.normalConstraint(vertex_instance,
+                                           source_instance)
+        cmds.delete(constraint)
 
     def random_rot(self, result):
         self.random_seed = \
